@@ -18,4 +18,4 @@ python3 vidsplitter.py
 Answer the prompts it gives you, and the script will output your trimmed files in the same directory!
 
 
-If you have any issues, questions or concerns, DM me on discord: HypnoticOcelot#6969
+###### If you have any issues, questions or concerns, DM me on discord: HypnoticOcelot#6969 or create an issue
