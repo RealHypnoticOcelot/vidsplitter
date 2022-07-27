@@ -1,3 +1,4 @@
+from moviepy.editor import *
 g=0
 init = 0
 f = open("times.txt","w")
@@ -6,6 +7,13 @@ f.close()
 mins = int(input("How many minutes will each clip be? Use a whole number: "))
 minstoseconds = int(mins) * 60
 filename = input("Filename? must be in directory, include extension: ")
+if ".mkv" in filename:
+  print("\nConverting mkv to mp4!")
+  convert = VideoFileClip(filename)
+  convert.write_videofile(f"converted_{filename}.mp4", codec="libx264",audio_codec="aac")
+  filename = f"converted_{filename}.mp4"
+
+
 def with_moviepy(filename):
     from moviepy.editor import VideoFileClip
     clip = VideoFileClip(filename)
