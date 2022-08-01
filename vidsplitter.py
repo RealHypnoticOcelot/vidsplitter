@@ -4,14 +4,27 @@ init = 0
 f = open("times.txt","w")
 f.close()
 
-mins = int(input("How many minutes will each clip be? Use a whole number: "))
-minstoseconds = int(mins) * 60
+mins = input("How many minutes/seconds will each clip be? Use a whole number, followed by the initial of the unit: ")
+if "m" in mins:
+  mins = int(mins.replace("m", ""))
+  minstoseconds = int(mins) * 60
+elif "s" in mins:
+  mins = int(mins.replace("s", ""))
+  minstoseconds = int(mins)
+  mins = float(mins / 60)
+  seconds = 1
 filename = input("Filename? must be in directory, include extension: ")
 if ".mkv" in filename:
-  print("\nConverting mkv to mp4!")
-  convert = VideoFileClip(filename)
-  convert.write_videofile(f"converted_{filename}.mp4", codec="libx264",audio_codec="aac")
-  filename = f"converted_{filename}.mp4"
+  filename2 = filename.replace(".mkv", "")
+  if os.path.exists(f"converted_{filename2}.mp4"): #if the no sound version already exists
+    print(f"\n\"converted_{filename2}.mp4\" already exists, skipping conversion")
+    filename = f"converted_{filename2}.mp4"
+    pass
+  else:
+    print("\nConverting mkv to mp4!")
+    convert = VideoFileClip(filename)
+    convert.write_videofile(f"converted_{filename2}.mp4", codec="libx264",audio_codec="aac")
+    filename = f"converted_{filename2}.mp4"
 
 
 def with_moviepy(filename):
@@ -26,13 +39,20 @@ durationint = int(with_moviepy(f"{filename}"))
 if duration - int(duration) != 0:
   durationint = durationint + 1 # makes sure if the video isn't an even amount of minutes that it won't cut the clip
 
-minsinvid = durationint/60
-if minsinvid - int(minsinvid) != 0:
-  minsinvid = int(minsinvid) + 1 # if the minutes in the video isn't whole, add 1 so it doesn't cut
-print(minsinvid)
+if seconds == 0:
+  minsinvid = durationint/60
+  if minsinvid - int(minsinvid) != 0:
+    minsinvid = int(minsinvid) + 1 # if the minutes in the video isn't whole, add 1 so it doesn't cut
+  print(minsinvid)
+elif seconds == 1:
+  minsinvid = durationint/minstoseconds
+  if minsinvid - int(minsinvid) != 0:
+    minsinvid = int(minsinvid) + 1 # if the minutes in the video isn't whole, add 1 so it doesn't cut
+  print(minsinvid)
 
-if minsinvid % mins != 0:
+if minsinvid % mins != 0: # if the video duration isn't a whole number
   minsinvid = minsinvid - (minsinvid % mins)
+  print(minsinvid)
   minsinvid = int((minsinvid/mins) + 1)
   print(minsinvid)
 
@@ -41,6 +61,7 @@ while g != minsinvid: #set to amount of minutes in the video
     init = init + minstoseconds #interval to split into
     values = f"{a}-{init}"
     g = g+1
+    print(g)
     f = open("times.txt", "a")
     f.write(f"{values}\n")
     f.close()
