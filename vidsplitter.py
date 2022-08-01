@@ -61,7 +61,6 @@ while g != minsinvid: #set to amount of minutes in the video
     init = init + minstoseconds #interval to split into
     values = f"{a}-{init}"
     g = g+1
-    print(g)
     f = open("times.txt", "a")
     f.write(f"{values}\n")
     f.close()
