@@ -8,6 +8,7 @@ mins = input("How many minutes/seconds will each clip be? Use a whole number, fo
 if "m" in mins:
   mins = int(mins.replace("m", ""))
   minstoseconds = int(mins) * 60
+  seconds = 0
 elif "s" in mins:
   mins = int(mins.replace("s", ""))
   minstoseconds = int(mins)
@@ -19,7 +20,6 @@ if ".mkv" in filename:
   if os.path.exists(f"converted_{filename2}.mp4"): #if the no sound version already exists
     print(f"\n\"converted_{filename2}.mp4\" already exists, skipping conversion")
     filename = f"converted_{filename2}.mp4"
-    pass
   else:
     print("\nConverting mkv to mp4!")
     convert = VideoFileClip(filename)
@@ -66,11 +66,13 @@ while g != minsinvid: #set to amount of minutes in the video
     f.close()
 
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
-required_video_file = f"{filename}"
+required_video_file = VideoFileClip(filename)
 with open("times.txt") as f:
   times = f.readlines()
 times = [x.strip() for x in times] 
 for time in times:
   starttime = int(time.split("-")[0])
   endtime = int(time.split("-")[1])
-  ffmpeg_extract_subclip(required_video_file, starttime, endtime, targetname=str(times.index(time)+1)+".mp4")
+  subclip = required_video_file.subclip(starttime, endtime)
+  filen = str(times.index(time)+1)+".mp4"
+  subclip.write_videofile(filen, audio_codec='aac')
