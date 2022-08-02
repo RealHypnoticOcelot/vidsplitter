@@ -43,18 +43,14 @@ if seconds == 0:
   minsinvid = durationint/60
   if minsinvid - int(minsinvid) != 0:
     minsinvid = int(minsinvid) + 1 # if the minutes in the video isn't whole, add 1 so it doesn't cut
-  print(minsinvid)
 elif seconds == 1:
   minsinvid = durationint/minstoseconds
   if minsinvid - int(minsinvid) != 0:
     minsinvid = int(minsinvid) + 1 # if the minutes in the video isn't whole, add 1 so it doesn't cut
-  print(minsinvid)
 
 if minsinvid % mins != 0: # if the video duration isn't a whole number
   minsinvid = minsinvid - (minsinvid % mins)
-  print(minsinvid)
   minsinvid = int((minsinvid/mins) + 1)
-  print(minsinvid)
 
 while g != minsinvid: #set to amount of minutes in the video
     a = init
@@ -65,14 +61,20 @@ while g != minsinvid: #set to amount of minutes in the video
     f.write(f"{values}\n")
     f.close()
 
-from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 required_video_file = VideoFileClip(filename)
 with open("times.txt") as f:
   times = f.readlines()
 times = [x.strip() for x in times] 
+fullduration = required_video_file.duration
 for time in times:
   starttime = int(time.split("-")[0])
   endtime = int(time.split("-")[1])
+  if starttime >= fullduration:
+    print(f"Video too short to complete request! Quitting loop..")
+    break
+  if endtime >= fullduration:
+    print(f"Cropping endtime from {endtime} to {fullduration}!")
+    endtime = None
   subclip = required_video_file.subclip(starttime, endtime)
   filen = str(times.index(time)+1)+".mp4"
   subclip.write_videofile(filen, audio_codec='aac')
