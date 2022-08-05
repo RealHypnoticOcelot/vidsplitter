@@ -26,6 +26,23 @@ if ".mkv" in filename:
     convert.write_videofile(f"converted_{filename2}.mp4", codec="libx264",audio_codec="aac")
     filename = f"converted_{filename2}.mp4"
 
+isoffset = input("Offset the filenames? i.e. starting at 70.mp4 instead of 1.mp4, y/n: ")
+if isoffset.lower() == "y":
+  offset = input("What should it start at?: ")
+  try:
+    int(offset)
+  except:
+    print("Invalid! Disabling offset...")
+    offset = 1
+  else:
+    if int(offset) < 1:
+      print("Not a valid starting point! Disabling...")
+      offset = 1
+    else:
+      offset = int(offset)
+else:
+  offset = 1
+
 
 def with_moviepy(filename):
     from moviepy.editor import VideoFileClip
@@ -76,5 +93,5 @@ for time in times:
     print(f"Cropping endtime from {endtime} to {fullduration}!")
     endtime = None
   subclip = required_video_file.subclip(starttime, endtime)
-  filen = str(times.index(time)+1)+".mp4"
+  filen = str(times.index(time)+offset)+".mp4"
   subclip.write_videofile(filen, audio_codec='aac')
